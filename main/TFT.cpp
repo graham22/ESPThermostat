@@ -21,11 +21,12 @@ namespace CLASSICDIY
         tft.setRotation(1); // Landscape
         tft.fillScreen(TFT_BLACK);
         logd("Screen init: Width %d, Height %d", tft.width(), tft.height());
-        uint16_t calData[5] = {452, 3097, 460, 3107, 4};
-        tft.setTouch(calData);
         pinMode(TFT_LED_PIN, OUTPUT);
         digitalWrite(TFT_LED_PIN, HIGH);
         _display_timer = DISPLAY_TIMOUT;
+#ifdef TFT_TOUCH
+        uint16_t calData[5] = {452, 3097, 460, 3107, 4};
+        tft.setTouch(calData);
         int xpos = ARROW_X;
         int ypos = ARROW_Y;
         tft.fillTriangle(
@@ -39,6 +40,7 @@ namespace CLASSICDIY
             xpos - 40, ypos - 60, // bottom left
             xpos + 40, ypos - 60, // bottom right
             TFT_BLUE);
+#endif
     }
 
     void TFT::Display(const char *hdr1, const char *detail1, const char *hdr2, int count)
@@ -102,6 +104,7 @@ namespace CLASSICDIY
         uint16_t x = 0, y = 0;
         if (tft.getTouch(&x, &y))
         {
+#ifdef TFT_TOUCH
             logd("Touch at %d-%d", x, y);
             if (_display_timer > 0)
             {
@@ -124,6 +127,7 @@ namespace CLASSICDIY
                     _thermostat->ToggleMode(); // toggle on/off
                 }
             }
+#endif
             digitalWrite(TFT_LED_PIN, HIGH);
             _display_timer = DISPLAY_TIMOUT;
         }

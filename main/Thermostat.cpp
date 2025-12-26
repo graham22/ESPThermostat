@@ -25,7 +25,7 @@ namespace CLASSICDIY
         _current_mode = undefined;
         _thermometer.Init();
         _tft.Init(this);
-        _tft.TargetTemperature(_mode, _targetTemperature);
+        _tft.TargetTemperature(_mode, getTargetTemperature());
         _asyncServer.on("/", HTTP_GET,
                         [this](AsyncWebServerRequest *request)
                         {
@@ -108,7 +108,7 @@ namespace CLASSICDIY
         if (_targetTemperature < MAX_TEMPERATURE)
         {
             _targetTemperature += TEMP_PRECISION;
-            _tft.TargetTemperature(_mode, _targetTemperature);
+            setTargetTemperature(_targetTemperature);
         }
     }
 
@@ -117,7 +117,7 @@ namespace CLASSICDIY
         if (_targetTemperature > MIN_TEMPERATURE)
         {
             _targetTemperature -= TEMP_PRECISION;
-            _tft.TargetTemperature(_mode, _targetTemperature);
+            setTargetTemperature(_targetTemperature);
         }
     }
 
@@ -144,7 +144,7 @@ namespace CLASSICDIY
             _current_mode = _mode;
             _heating_element_on = false;
             actionHeater();
-            _tft.TargetTemperature(_mode, _targetTemperature);
+            _tft.TargetTemperature(_mode, getTargetTemperature());
         }
         float currentTemperature = _thermometer.Temperature();
         currentTemperature = roundf(currentTemperature * 10.0f) / 10.0f; // round to one decimal place
@@ -177,7 +177,7 @@ namespace CLASSICDIY
             _lastPublishTimeStamp = now;
             JsonDocument doc;
             doc["mode"] = ModeStrings[_current_mode];
-            doc["target_temperature"] = _targetTemperature;
+            doc["target_temperature"] = getTargetTemperature();
             doc["temperature"] = currentTemperature;
             doc["element"] = _heating_element_on;
             String s;
@@ -218,13 +218,13 @@ namespace CLASSICDIY
     void Thermostat::onSaveSetting(JsonDocument &doc)
     {
         doc["_mode"] = _mode;
-        doc["_targetTemperature"] = _targetTemperature;
+        doc["_targetTemperature"] = getTargetTemperature();
     }
 
     void Thermostat::onLoadSetting(JsonDocument &doc)
     {
         _mode = doc["_mode"].isNull() ? off : doc["_mode"].as<Mode>();
-        _targetTemperature = doc["_targetTemperature"].isNull() ? 10.0 : doc["_targetTemperature"].as<float>();
+        setTargetTemperature(doc["_targetTemperature"].isNull() ? 10.0 : doc["_targetTemperature"].as<float>());
     }
 
     String Thermostat::appTemplateProcessor(const String &var)
@@ -346,11 +346,10 @@ namespace CLASSICDIY
         if (String(topic) == (_iot.getRootTopicPrefix() + "/cmnd/TEMPERATURE"))
         {
             logd("TEMPERATURE command received: %s", payload);
-            int tmp = atoi(payload);
+            float tmp = atof(payload);
             if (tmp > MIN_TEMPERATURE && tmp < MAX_TEMPERATURE)
             {
-                _targetTemperature = tmp;
-                _tft.TargetTemperature(_mode, _targetTemperature);
+                setTargetTemperature(tmp);
             }
         }
     }

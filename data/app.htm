@@ -53,23 +53,6 @@ const char home_html[] PROGMEM = R"rawliteral(
       <h2>%title%</h2>
       <div style='font-size: .6em;'>Firmware config version '%version%'</div>
       <hr>
-        <div class="container">
-          <svg id="thermostat" viewBox="0 0 200 200">
-          <!-- Background arc -->
-          <path d="M30 150 A70 70 0 1 1 170 150"
-                stroke="#ddd" stroke-width="20" fill="none" />
-
-          <!-- Active arc -->
-          <path id="activeArc" d="M30 150 A70 70 0 1 1 170 150"
-                stroke="#ff8c00" stroke-width="20" fill="none"
-                stroke-dasharray="0 500" stroke-linecap="round" />
-
-          <!-- Needle -->
-          <circle id="needle" x1="100" y1="100" x2="100" y2="35"
-                stroke="#333" stroke-width="6" stroke-linecap="round"
-                transform="rotate(0 100 100)" />
-        </svg>
-      </div>
       <div class="state">
         <button class="heat" id="Mode" onclick="sendCommand('heat')">Heat</button>
         <button class="up"    onclick="sendCommand('up')">+</button>

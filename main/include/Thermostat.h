@@ -37,6 +37,8 @@ namespace CLASSICDIY
         void setTargetTemperature(float v)
         {
             _targetTemperature = v;
+            _tft.TargetTemperature(_mode, _targetTemperature);
+            logd("_targetTemperature: %f", _targetTemperature);
         }
         float getTargetTemperature()
         {
@@ -63,7 +65,6 @@ namespace CLASSICDIY
         void actionHeater();
         float _currentTemperature;
         float _targetTemperature = DEFAULT_TARGET_TEMPERATURE;
-        float _lastTargetTemperature = 0;
         float _lastTemperatureReading = 0;
         boolean _heating_element_on = false;
         Mode _mode = undefined;

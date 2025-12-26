@@ -1,22 +1,18 @@
 #pragma once
 #include <Arduino.h>
+#include "defines.h"
 #ifdef MAX6675
 #include <max6675.h>
 #endif
 class Thermometer
 {
-	#define SAMPLESIZE 16
-	#define ADC_Resolution 4095.0
 	#define THERMISTORNOMINAL 10000 
 	// temp. for nominal resistance (almost always 25 C)
 	#define TEMPERATURENOMINAL 25
-	// how many samples to take and average, more takes longer
-	// but is more 'smooth'
-	#define NUMSAMPLES 10
 	// The beta coefficient of the thermistor (usually 3000-4000)
 	#define BCOEFFICIENT 3700
 	// the value of the 'other' resistor
-	#define SERIESRESISTOR 10000
+	#define SERIESRESISTOR 9995
 
 	int _sensorPin; //Defines the pin that the thermistor is connected to
 	int _vRefPin; 
@@ -39,8 +35,7 @@ public:
 	float Temperature();
 
 private:	
-	double ReadVoltage();
-	float AddReading(float val);
+	double ReadOversampledADC();
 
 };
 

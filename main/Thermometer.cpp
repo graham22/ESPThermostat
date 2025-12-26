@@ -33,30 +33,18 @@ void Thermometer::Init()
 	digitalWrite(_vRefPin, LOW);
 }
 
-double Thermometer::ReadVoltage()
+double Thermometer::ReadOversampledADC()
 {
 	digitalWrite(_vRefPin, HIGH);
 	delay(10);
-	double reading = analogRead(_sensorPin); // Reference voltage is 3v3 so maximum reading is 3v3 = 4095 in range 0 to 4095
+    const int samples = 32;
+    uint32_t sum = 0;
+    for (int i = 0; i < samples; i++)
+        sum += analogRead(_sensorPin);
 	digitalWrite(_vRefPin, LOW);
+	float reading = (float)sum / samples;
 	if(reading < 1 || reading > ADC_Resolution) return 0;
 	return -0.000000000000016 * pow(reading,4) + 0.000000000118171 * pow(reading,3)- 0.000000301211691 * pow(reading,2)+ 0.001109019271794 * reading + 0.034143524634089;
-}
-
-float Thermometer::AddReading(float val)
-{
-	float currentAvg = 0.0;
-	if (_numberOfSummations > 0) {
-		currentAvg = _rollingSum / _numberOfSummations;
-	}
-	if (_numberOfSummations < SAMPLESIZE) {
-		_numberOfSummations++;
-	}
-	else {
-		_rollingSum -= currentAvg;
-	}
-	_rollingSum += val;
-	return _rollingSum / _numberOfSummations;
 }
 
 #ifdef MAX6675
@@ -69,7 +57,7 @@ float Thermometer::Temperature()
 #else
 float Thermometer::Temperature()
 {
-	double voltage = ReadVoltage();
+	double voltage = ReadOversampledADC();
 	logv("Thermometer Analog reading: %.1f", voltage);
 	double average = _voltRef / voltage - 1;
 	average = SERIESRESISTOR / average;
@@ -80,7 +68,7 @@ float Thermometer::Temperature()
 	steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
 	steinhart = 1.0 / steinhart;                 // Invert
 	steinhart -= 273.15;                         // convert to C
-	return AddReading(steinhart);
+	return steinhart;
 }
 #endif
 

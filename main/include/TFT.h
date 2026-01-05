@@ -6,8 +6,7 @@
 #include "IThermostatControl.h"
 #include "Enumerations.h"
 
-namespace CLASSICDIY
-{
+using namespace CLASSICDIY;
 
 // Fonts
 #define FF17 &FreeSans9pt7b
@@ -43,41 +42,38 @@ namespace CLASSICDIY
 #define DETAIL_FONT 1
 #define NumChar(font) SCREEN_WIDTH / (6 * font)
 
-  struct TFTHeaderCache
-  {
-    String hdr1;
-    String detail1;
-    String hdr2;
-    String detail2;
-    int count = -1; // use -1 to indicate “no previous count”
-    String status;
-    String levelStr;
-  };
+struct TFTHeaderCache {
+   String hdr1;
+   String detail1;
+   String hdr2;
+   String detail2;
+   int count = -1; // use -1 to indicate “no previous count”
+   String status;
+   String levelStr;
+};
 
-  class TFT : public IDisplayServiceInterface
-  {
-  public:
-    void Init(IThermostatControl* thermostat);
-    void Display(const char *hdr1, const char *detail1, const char *hdr2, const char *detail2);
-    void Display(const char *hdr1, const char *detail1, const char *hdr2, int count);
-    void Element(boolean state);
-    void runTFT(Mode mode);
-    void TargetTemperature(Mode mode, float targetTemperature);
-    void CurrentTemperature(float temperature);
+class TFT : public IDisplayServiceInterface {
+ public:
+   void Init(IThermostatControl *thermostat);
+   void Display(const char *hdr1, const char *detail1, const char *hdr2, const char *detail2);
+   void Display(const char *hdr1, const char *detail1, const char *hdr2, int count);
+   void Element(boolean state);
+   void runTFT(Mode mode);
+   void TargetTemperature(Mode mode, float targetTemperature);
+   void CurrentTemperature(float temperature);
 
-  private:
-    u_int _display_timer;
-    uint16_t _hSplit = 70;
-    float ltx = 0;                 // Saved x coord of bottom of needle
-    uint16_t osx = 120, osy = 120; // Saved x & y coords
-    int value[6] = {0, 0, 0, 0, 0, 0};
-    int old_value[6] = {-1, -1, -1, -1, -1, -1};
-    int old_analog = -999; // Value last displayed
-    void drawIfChanged(const String &newVal, String &oldVal, int x, int y, uint16_t color);
-    TFTHeaderCache _headerCache;
-    boolean _wifi_on = false;
-    IThermostatControl* _thermostat;
-  };
+ private:
+   u_int _display_timer;
+   uint16_t _hSplit = 70;
+   float ltx = 0;                 // Saved x coord of bottom of needle
+   uint16_t osx = 120, osy = 120; // Saved x & y coords
+   int value[6] = {0, 0, 0, 0, 0, 0};
+   int old_value[6] = {-1, -1, -1, -1, -1, -1};
+   int old_analog = -999; // Value last displayed
+   void drawIfChanged(const String &newVal, String &oldVal, int x, int y, uint16_t color);
+   TFTHeaderCache _headerCache;
+   boolean _wifi_on = false;
+   IThermostatControl *_thermostat;
+};
 
-} // namespace CLASSICDIY
 #endif

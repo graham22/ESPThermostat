@@ -11,16 +11,13 @@ ThreadController _controller = ThreadController();
 Thread *_workerThreadTFT = new Thread();
 Thread *_workerThreadHeat = new Thread();
 
-void setup()
-{
+void setup() {
    // wait for Serial to connect, give up after 5 seconds, USB may not be connected
    delay(3000);
    unsigned long start = millis();
    Serial.begin(115200);
-   while (!Serial)
-   {
-      if (5000 < millis() - start)
-      {
+   while (!Serial) {
+      if (5000 < millis() - start) {
          break;
       }
    }
@@ -48,8 +45,7 @@ void setup()
    logd("------------Setup Done ---------------");
 }
 
-void loop()
-{
+void loop() {
    _controller.run();
    esp_task_wdt_reset(); // feed watchdog
    delay(10);

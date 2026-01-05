@@ -6,9 +6,6 @@
 
 #define ADC_Resolution 4095.0
 
-#define WIFI_STATUS_PIN GPIO_NUM_2 // LED Pin
-// #define FACTORY_RESET_PIN GPIO_NUM_34 // Clear NVRAM
-
 // I2C
 #define I2C_SDA GPIO_NUM_21
 #define I2C_SCL GPIO_NUM_22
